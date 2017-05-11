@@ -26,6 +26,7 @@ class BigBangActionBar extends ViewGroup implements View.OnClickListener {
     ImageView mSearch;
     ImageView mShare;
     ImageView mCopy;
+    ImageView mSearchMap;
     Drawable mBorder;
     private int mActionGap;
     private int mContentPadding;
@@ -62,6 +63,9 @@ class BigBangActionBar extends ViewGroup implements View.OnClickListener {
         mShare = new ImageView(context);
         mShare.setImageResource(R.mipmap.bigbang_action_share);
         mShare.setOnClickListener(this);
+        mSearchMap = new ImageView(context);
+        mSearchMap.setImageResource(R.mipmap.bigbang_action_search_map);
+        mSearchMap.setOnClickListener(this);
         mCopy = new ImageView(context);
         mCopy.setImageResource(R.mipmap.bigbang_action_copy);
         mCopy.setOnClickListener(this);
@@ -69,6 +73,7 @@ class BigBangActionBar extends ViewGroup implements View.OnClickListener {
         addView(mSearch, createLayoutParams());
         addView(mShare, createLayoutParams());
         addView(mCopy, createLayoutParams());
+        addView(mSearchMap, createLayoutParams());
 
         setWillNotDraw(false);
 
@@ -107,6 +112,7 @@ class BigBangActionBar extends ViewGroup implements View.OnClickListener {
         int height = getMeasuredHeight();
 
         layoutSubView(mSearch, mActionGap, 0);
+        layoutSubView(mSearchMap, width - mActionGap * 3 - mSearchMap.getMeasuredWidth() - mShare.getMeasuredWidth() - mCopy.getMeasuredWidth(), 0);
         layoutSubView(mShare, width - mActionGap * 2 - mShare.getMeasuredWidth() - mCopy.getMeasuredWidth(), 0);
         layoutSubView(mCopy, width - mActionGap - mCopy.getMeasuredWidth(), 0);
 
@@ -152,12 +158,18 @@ class BigBangActionBar extends ViewGroup implements View.OnClickListener {
             mActionListener.onShare();
         } else if (v == mCopy) {
             mActionListener.onCopy();
+        } else if (v == mSearchMap) {
+            mActionListener.onSearchMap();
         }
     }
 
     interface ActionListener {
         void onSearch();
+
         void onShare();
+
         void onCopy();
+
+        void onSearchMap();
     }
 }

@@ -87,4 +87,9 @@ public class BigBangActivity extends AppCompatActivity implements BigBangLayout.
         BigBang.startAction(this, BigBang.ACTION_COPY, text);
     }
 
+    @Override
+    public void onSearchMap(String text) {
+        BigBang.startAction(this, BigBang.ACTION_SEARCH_MAP, text);
+    }
+
 }

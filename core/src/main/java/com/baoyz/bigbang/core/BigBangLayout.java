@@ -418,6 +418,14 @@ public class BigBangLayout extends ViewGroup implements BigBangActionBar.ActionL
         }
     }
 
+    @Override
+    public void onSearchMap() {
+        if (mActionListener != null) {
+            String text = makeSelectedText();
+            mActionListener.onSearchMap(text);
+        }
+    }
+
     public void setActionListener(ActionListener actionListener) {
         mActionListener = actionListener;
     }
@@ -512,6 +520,8 @@ public class BigBangLayout extends ViewGroup implements BigBangActionBar.ActionL
         void onShare(String text);
 
         void onCopy(String text);
+
+        void onSearchMap(String text);
     }
 
 }

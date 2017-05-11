@@ -25,6 +25,7 @@ public class BigBang {
     public static final String ACTION_SEARCH = "search";
     public static final String ACTION_SHARE = "share";
     public static final String ACTION_COPY = "copy";
+    public static final String ACTION_SEARCH_MAP = "search_map";
     public static final String ACTION_BACK = "back";
     private static SimpleParser sParser;
     private static int sItemSpace;
@@ -37,7 +38,7 @@ public class BigBang {
         sItemTextSize = itemTextSize;
     }
 
-    @StringDef({ACTION_SEARCH, ACTION_SHARE, ACTION_COPY, ACTION_BACK})
+    @StringDef({ACTION_SEARCH, ACTION_SHARE, ACTION_COPY, ACTION_BACK, ACTION_SEARCH_MAP})
     @Retention(SOURCE)
     public @interface ActionType {
 
