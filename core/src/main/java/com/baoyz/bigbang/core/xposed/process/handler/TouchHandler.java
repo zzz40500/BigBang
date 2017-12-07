@@ -79,7 +79,6 @@ public class TouchHandler {
                     }
                 }
                 setClickTimeMillis(targetTextView, currentTimeMillis);
-
             }
         }
         return handle;
@@ -129,7 +128,6 @@ public class TouchHandler {
 
     private View getTargetTextView(View view, MotionEvent event, List<TextViewFilter> textViewFilters) {
         if (isOnTouchRect(view, event)) {
-
             if (view instanceof ViewGroup) {
                 try {
                     getTopSortedChildren((ViewGroup) view, tempViewList);

@@ -11,10 +11,10 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
@@ -23,6 +23,9 @@ import java.net.URLEncoder;
 public class BigBangService extends AccessibilityService {
 
     private CharSequence mWindowClassName;
+    private static final String TAG = "BigBangService";
+    private long lastTime;
+    private CharSequence txt;
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -30,7 +33,12 @@ public class BigBangService extends AccessibilityService {
         CharSequence className = event.getClassName();
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED: {
-                mWindowClassName = event.getClassName();
+                CharSequence windowClassName = event.getClassName();
+                if (isWechatUI() && windowClassName.equals("android.widget.FrameLayout")) {
+                    event.getSource().getChild(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                } else {
+                    mWindowClassName = windowClassName;
+                }
                 break;
             }
             case AccessibilityEvent.TYPE_VIEW_CLICKED: {
@@ -38,14 +46,20 @@ public class BigBangService extends AccessibilityService {
                     AccessibilityNodeInfo source = event.getSource();
                     CharSequence text = source.getText();
                     if (text != null) {
-                        try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("bigBang://?extra_text=" + URLEncoder.encode(text.toString(), "utf-8")));
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        ;
+                        if (text.length() > 3 && text.equals(txt) && System.currentTimeMillis() - lastTime < 1000) {
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("bigBang://?extra_text=" + URLEncoder.encode(text.toString(), "utf-8")));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
+                        txt = text;
+                        lastTime = System.currentTimeMillis();
                     }
+
                 }
                 break;
             }

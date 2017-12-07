@@ -7,4 +7,5 @@
     android:canRetrieveWindowContent="true"
     android:notificationTimeout="100"
     android:description="@string/accessibility_des"
-    android:packageNames="com.tencent.mm"/>
+    android:packageNames="com.tencent.mm"
+    />

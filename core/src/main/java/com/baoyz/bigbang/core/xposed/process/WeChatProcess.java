@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.baoyz.bigbang.core.xposed.common.L;
 import com.baoyz.bigbang.core.xposed.process.handler.ActivityTouchEvent;
 import com.baoyz.bigbang.core.xposed.process.handler.TouchHandler;
 import com.baoyz.bigbang.core.xposed.process.handler.ViewTouchEvent;
@@ -42,9 +43,26 @@ public class WeChatProcess extends AppProcess {
         if (mmTextView == null) {
             mmTextView = forClassName(loadPackageParam.classLoader, "com.tencent.mm.ui.widget.MMTextView");
         }
+
         if (mmTextView != null) {
             findAndHookMethod(mmTextView, "onTouchEvent",
                     MotionEvent.class, new MMTextViewTouchEvent());
+        }
+        Class<?> mCellTextView = forClassName(loadPackageParam.classLoader, "com.tencent.mm.ui.widget.celltextview.CellTextView");
+
+        if (mCellTextView != null) {
+            findAndHookMethod(mCellTextView, "onTouchEvent",
+                    MotionEvent.class, new MMTextViewTouchEvent());
+
+//            findAndHookMethod(mCellTextView, "S",
+//                    CharSequence.class, new XC_MethodHook() {
+//
+//                        @Override
+//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                            super.beforeHookedMethod(param);
+//                            Log.e("dim", "S :  " + param.args[0]);
+//                        }
+//                    });
         }
         findAndHookMethod(Activity.class, "onTouchEvent", MotionEvent.class, new ActivityTouchEvent(mTouchHandler, mTextViewFilters));
         findAndHookMethod(View.class, "onTouchEvent", MotionEvent.class, new ViewTouchEvent(mTouchHandler, mTextViewFilters));

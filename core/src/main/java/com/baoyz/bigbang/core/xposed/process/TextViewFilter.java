@@ -8,8 +8,11 @@ import android.widget.DigitalClock;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 
 /**
  * Created by dim on 16/10/24.
@@ -46,6 +49,7 @@ public interface TextViewFilter {
         private static final String TAG = "WeChatValidTextViewFilter";
 
         Class staticTextViewClass;
+        Class mCellTextView;
 
         public WeChatValidTextViewFilter(ClassLoader classLoader) {
             try {
@@ -53,12 +57,20 @@ public interface TextViewFilter {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+            try {
+                mCellTextView = classLoader.loadClass("com.tencent.mm.ui.widget.celltextview.CellTextView");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public boolean filter(View view) {
-            if (staticTextViewClass != null) {
-                return staticTextViewClass.isInstance(view);
+            if (staticTextViewClass != null && staticTextViewClass.isInstance(view)) {
+                return true;
+            }
+            if (mCellTextView != null && mCellTextView.isInstance(view)) {
+                return true;
             }
             return false;
         }
@@ -68,7 +80,7 @@ public interface TextViewFilter {
             if (view instanceof TextView) {
                 return null;
             }
-            if (staticTextViewClass != null) {
+            if (staticTextViewClass != null && staticTextViewClass.isInstance(view)) {
                 try {
                     Method getText = staticTextViewClass.getMethod("getText");
                     if (getText != null) {
@@ -83,6 +95,31 @@ public interface TextViewFilter {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
+                }
+            }
+            if (mCellTextView != null && mCellTextView.isInstance(view)) {
+                for (Field field : mCellTextView.getDeclaredFields()) {
+                    Class<?> type = field.getType();
+
+                    if (type.getName().startsWith("com.tencent.mm.ui.widget.celltextview")) {
+                        field.setAccessible(true);
+                        try {
+                            Object o = field.get(view);
+                            Method getText = type.getDeclaredMethod("getText");
+                            if (getText != null) {
+                                Object invoke = getText.invoke(o);
+                                if (invoke != null) {
+                                    return invoke.toString();
+                                }
+                            }
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
             return null;
